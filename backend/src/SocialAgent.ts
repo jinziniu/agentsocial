@@ -28,8 +28,12 @@ export class SocialAgent {
   }
 
   private inferPersonality(style: string): string {
-    if (style.includes("技术") || style.includes("学习")) {
+    if (style.includes("技术") && style.includes("狂热")) {
+      return "技术狂热，极度理性，对非技术话题不感兴趣";
+    } else if (style.includes("技术") || style.includes("学习")) {
       return "理性、直接，喜欢用数据和逻辑说话";
+    } else if (style.includes("商业") && style.includes("纯")) {
+      return "纯商业思维，只关注盈利和市场，对技术不感兴趣";
     } else if (style.includes("商业") || style.includes("创业")) {
       return "务实、高效，关注价值和结果";
     } else if (style.includes("创意") || style.includes("艺术")) {
@@ -38,6 +42,10 @@ export class SocialAgent {
       return "温和、耐心，喜欢深入探讨";
     } else if (style.includes("自由") || style.includes("灵活")) {
       return "随性、开放，用轻松的语气交流";
+    } else if (style.includes("慢节奏") || style.includes("深度思考")) {
+      return "慢节奏、深度思考，不喜欢快节奏和高强度";
+    } else if (style.includes("快节奏") || style.includes("高效执行")) {
+      return "快节奏、高效执行，不喜欢慢节奏和拖延";
     }
     return "友好、平衡，用温和的语气表达";
   }
@@ -86,6 +94,41 @@ export class SocialAgent {
         communicationFrequency: "按需沟通",
         relationshipType: "项目伙伴",
         timeCommitment: "每周10-15小时"
+      },
+      "寻找技术极客": {
+        purpose: "寻找技术极客，共同探索前沿技术",
+        topics: ["编程", "开源", "技术研究", "代码"],
+        communicationFrequency: "每天",
+        relationshipType: "技术伙伴",
+        timeCommitment: "每周20+小时"
+      },
+      "寻找技术合伙人": {
+        purpose: "寻找技术合伙人，共同创业",
+        topics: ["技术创业", "产品开发", "技术架构"],
+        communicationFrequency: "每天",
+        relationshipType: "创业伙伴",
+        timeCommitment: "每周30+小时"
+      },
+      "寻找技术项目": {
+        purpose: "寻找有技术含量的创业项目进行投资",
+        topics: ["技术创业", "产品", "技术团队"],
+        communicationFrequency: "每周2-3次",
+        relationshipType: "投资关系",
+        timeCommitment: "每周10-15小时"
+      },
+      "寻找产品合作": {
+        purpose: "寻找产品合作，将创意转化为产品",
+        topics: ["产品设计", "用户体验", "创意"],
+        communicationFrequency: "每周2-3次",
+        relationshipType: "产品伙伴",
+        timeCommitment: "每周15-20小时"
+      },
+      "寻找设计伙伴": {
+        purpose: "寻找设计伙伴，共同打造产品",
+        topics: ["产品", "设计", "用户体验", "创意"],
+        communicationFrequency: "每周2-3次",
+        relationshipType: "产品伙伴",
+        timeCommitment: "每周15-20小时"
       }
     };
 
@@ -118,14 +161,22 @@ export class SocialAgent {
       acceptablePurposes.push(otherIntent.purpose);
     }
 
-    // 评估话题
-    if (this.interactionStyle.includes("技术") || this.interactionStyle.includes("学习")) {
+    // 评估话题 - 根据 Agent 类型匹配
+    if (this.interactionStyle.includes("技术") || this.interactionStyle.includes("代码") || this.interactionStyle.includes("极客")) {
       preferredTopics.push(...otherIntent.topics.filter(t => 
-        ["编程", "技术", "学习", "项目"].some(keyword => t.includes(keyword))
+        ["编程", "技术", "学习", "项目", "代码", "开源", "技术研究", "技术创业", "技术架构"].some(keyword => t.includes(keyword))
       ));
-    } else if (this.interactionStyle.includes("商业") || this.interactionStyle.includes("创业")) {
+    } else if (this.interactionStyle.includes("商业") || this.interactionStyle.includes("创业") || this.interactionStyle.includes("投资")) {
       preferredTopics.push(...otherIntent.topics.filter(t => 
-        ["创业", "商业", "产品", "合作"].some(keyword => t.includes(keyword))
+        ["创业", "商业", "产品", "合作", "投资", "市场", "技术创业", "产品开发"].some(keyword => t.includes(keyword))
+      ));
+    } else if (this.interactionStyle.includes("创意") || this.interactionStyle.includes("设计") || this.interactionStyle.includes("产品")) {
+      preferredTopics.push(...otherIntent.topics.filter(t => 
+        ["设计", "创意", "产品", "用户体验", "艺术", "产品设计"].some(keyword => t.includes(keyword))
+      ));
+    } else if (this.interactionStyle.includes("学习") || this.interactionStyle.includes("思考")) {
+      preferredTopics.push(...otherIntent.topics.filter(t => 
+        ["学习", "思考", "深度", "探索"].some(keyword => t.includes(keyword))
       ));
     } else {
       preferredTopics.push(...otherIntent.topics);
